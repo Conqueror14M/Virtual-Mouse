@@ -85,7 +85,12 @@ class handDetector():
                     fingers.append(0)
         return fingers
 
-
+    def handType(self):
+        if self.results.multi_hand_landmarks:
+            if self.lmList[17][0] < self.lmList[5][0]:
+                return "Right"
+            else:
+                return "Left"
 
 
 def main():
