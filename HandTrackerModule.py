@@ -26,21 +26,37 @@ class handDetector():
 		return img
 
 
-	def findposi(self, img, handNo=0, draw = True):
+    def findPosi(self, img, handNo=0, draw=True):
 
-		lmList = []
+        xList = []
+        yList = []
+        bbox = []
+        bboxInfo =[]
+        self.lmList = []
+        if self.results.multi_hand_landmarks:
+            myHand = self.results.multi_hand_landmarks[handNo]
+            for id, lm in enumerate(myHand.landmark):
+                h, w, c = img.shape
+                px, py = int(lm.x * w), int(lm.y * h)
+                xList.append(px)
+                yList.append(py)
+                self.lmList.append([px, py])
+                if draw:
+                    cv2.circle(img, (px, py), 5, (255, 0, 255), cv2.FILLED)
+            xmin, xmax = min(xList), max(xList)
+            ymin, ymax = min(yList), max(yList)
+            boxW, boxH = xmax - xmin, ymax - ymin
+            bbox = xmin, ymin, boxW, boxH
+            cx, cy = bbox[0] + (bbox[2] // 2), \
+                     bbox[1] + (bbox[3] // 2)
+            bboxInfo = {"id": id, "bbox": bbox,"center": (cx, cy)}
 
-		if self.results.multi_hand_landmarks:
-			myHand = self.results.multi_hand_landmarks[handNo]
-			for id, lm in enumerate(myHand.landmark):
-				h, w, c = img.shape
-				cx, cy = int(lm.x*w), int(lm.y*h)
-				lmList.append([id, cx, cy])
-				if draw:
-					cv2.circle(img, (cx, cy), 7, (255, 0, 0), cv2.FILLED)
+            if draw:
+                cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20),
+                              (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20),
+                              (0, 255, 0), 2)
 
-		return lmList
-
+        return self.lmList, bboxInfo
 def main():
 
 	pTime = 0
