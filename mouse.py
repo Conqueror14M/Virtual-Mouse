@@ -40,6 +40,11 @@ while True:
 			pyautogui.moveTo(wScr-clocX, clocY)
 			cv2.circle(img, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
 
+		if fingers[1]==1 and fingers[2]==1:
+			length, img, lineInfo =detector.findDistance(8, 12, img)
+			if length < 40:
+				cv2.circle(img, (lineInfo[4], lineInfo[5]), 15, (0, 255, 0), cv2.FILLED)
+				pyautogui.click()
 
 	cTime = time.time()
 	fps = 1/(cTime-pTime)
