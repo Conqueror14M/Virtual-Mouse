@@ -5,6 +5,10 @@ import time
 import pyautogui
 
 wCam, hCam = 640, 480
+smoothening = 2
+
+plocX, plocY = 0, 0
+clocX, clocY = 0, 0
 
 cap = cv2.VideoCapture(0)
 cap.set(3, wCam)
@@ -30,7 +34,10 @@ while True:
 			x3 = np.interp(x1, (0, wCam), (0, wScr))
 			y3 = np.interp(y1, (0, hCam), (0, hScr))
 
-			pyautogui.moveTo(wScr-x3, y3)
+			clocX = plocX + (x3 - plocX) / smoothening
+			clocY = plocY + (y3 - plocY) / smoothening
+
+			pyautogui.moveTo(wScr-clocX, clocY)
 			cv2.circle(img, (x1, y1), 15, (255, 0, 255), cv2.FILLED)
 
 
